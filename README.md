@@ -14,12 +14,12 @@ AI-powered system for identifying and addressing menstrual health vulnerabilitie
 ## Setup
 
 1. Python 3.14
-2. PostgreSQL 15+ with PostGIS
+2. PostgreSQL 17 with PostGIS
 3. Install dependencies: `pip install -r requirements.txt`
 
 ## Database
 
-- Database name: menstrual_health
+- Database name: mhealth_lk
 - See `src/database/schema.sql` for schema
 
 Created: 3/17/2026
