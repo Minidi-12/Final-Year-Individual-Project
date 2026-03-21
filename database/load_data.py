@@ -1,10 +1,4 @@
-# ================================================================
-# SATHKARA PROJECT — Data Loading Script
-# Files needed in data/ folder:
-#   - District_Data_Extraction.xlsx
-#   - Menstrual Health Access Survey (Responses).xlsx
-#   - YouTube_Comments_Cleaned.xlsx
-# ================================================================
+# Data Loading Script
 
 import pandas as pd
 import os
@@ -30,14 +24,13 @@ engine = create_engine(
 try:
     with engine.connect() as conn:
         conn.execute(text('SELECT 1'))
-    print("✅ Connected to database successfully!")
+    print(" Connected to database successfully!")
 except Exception as e:
-    print(f"❌ Connection failed: {e}")
+    print(f" Connection failed: {e}")
     exit()
 
-# ================================================================
 # STEP 1: Load 25 Districts from Your Excel File
-# ================================================================
+
 print("\n--- STEP 1: Loading Districts ---")
 
 PROVINCE_MAP = {
@@ -115,7 +108,7 @@ try:
     count = pd.read_sql(
         'SELECT COUNT(*) FROM districts', engine
     ).iloc[0, 0]
-    print(f"✅ Loaded {count} districts (expected 25)")
+    print(f" Loaded {count} districts (expected 25)")
     print(df_districts[[
         'name', 'province',
         'total_population',
@@ -124,13 +117,12 @@ try:
     ]].to_string())
 
 except Exception as e:
-    print(f"❌ District loading failed: {e}")
+    print(f" District loading failed: {e}")
     import traceback
     traceback.print_exc()
 
-# ================================================================
 # STEP 2: Create Vulnerability Score Placeholders
-# ================================================================
+
 print("\n--- STEP 2: Creating Vulnerability Score Placeholders ---")
 
 try:
@@ -149,14 +141,14 @@ try:
     count = pd.read_sql(
         'SELECT COUNT(*) FROM vulnerability_scores', engine
     ).iloc[0, 0]
-    print(f"✅ Created {count} placeholder rows (expected 25)")
+    print(f" Created {count} placeholder rows (expected 25)")
 
 except Exception as e:
-    print(f"❌ Vulnerability scores setup failed: {e}")
+    print(f" Vulnerability scores setup failed: {e}")
 
-# ================================================================
+
 # STEP 3: Load Survey Responses
-# ================================================================
+
 print("\n--- STEP 3: Loading Survey Responses ---")
 
 try:
@@ -203,12 +195,12 @@ try:
             district_col[0]
         ].unique()
         if len(unmapped) > 0:
-            print(f"   ⚠️ Unmapped districts: {unmapped}")
+            print(f"    Unmapped districts: {unmapped}")
         else:
-            print("   ✅ All districts mapped successfully")
+            print("    All districts mapped successfully")
     else:
         surveys['district_id'] = None
-        print("   ⚠️ District column not found")
+        print("    District column not found")
 
     # ── FIX 2: Map columns — handle duplicates properly ───────
     col_map = {}
@@ -287,7 +279,7 @@ try:
                 col_map[col] = mapped
                 used_names[mapped] = col
             else:
-                print(f"   ⚠️ Skipping duplicate: {col} → {mapped}")
+                print(f"    Skipping duplicate: {col} → {mapped}")
 
     surveys_clean = surveys.rename(columns=col_map)
 
@@ -345,7 +337,7 @@ try:
     count = pd.read_sql(
         'SELECT COUNT(*) FROM survey_responses', engine
     ).iloc[0, 0]
-    print(f"✅ Loaded {count} survey responses")
+    print(f" Loaded {count} survey responses")
 
     # ── Show district breakdown ────────────────────────────────
     district_breakdown = pd.read_sql('''
@@ -360,13 +352,12 @@ try:
     print(district_breakdown.to_string(index=False))
 
 except Exception as e:
-    print(f"❌ Survey loading failed: {e}")
+    print(f" Survey loading failed: {e}")
     import traceback
     traceback.print_exc()
 
-# ================================================================
 # STEP 4: Load YouTube Comments
-# ================================================================
+
 print("\n--- STEP 4: Loading YouTube Comments ---")
 
 try:
@@ -428,7 +419,7 @@ try:
     count = pd.read_sql(
         'SELECT COUNT(*) FROM youtube_comments', engine
     ).iloc[0, 0]
-    print(f"✅ Loaded {count} YouTube comments")
+    print(f" Loaded {count} YouTube comments")
 
     # ── Show sentiment distribution ────────────────────────────
     sentiment_dist = pd.read_sql('''
@@ -442,13 +433,12 @@ try:
     print(sentiment_dist.to_string(index=False))
 
 except Exception as e:
-    print(f"❌ YouTube comments loading failed: {e}")
+    print(f" YouTube comments loading failed: {e}")
     import traceback
     traceback.print_exc()
 
-# ================================================================
 # FINAL VERIFICATION
-# ================================================================
+
 print("\n" + "=" * 50)
 print("DATABASE LOADING COMPLETE — FINAL CHECK")
 print("=" * 50)
@@ -480,11 +470,11 @@ for table, expected in tables:
             f"(expected ~{expected})"
         )
     except Exception as e:
-        print(f"  ❌ {table}: could not check — {e}")
+        print(f"   {table}: could not check — {e}")
         all_good = False
 
 print("\n" + (
-    "✅ ALL DATA LOADED SUCCESSFULLY!"
+    " ALL DATA LOADED SUCCESSFULLY!"
     if all_good
-    else "⚠️ Some tables need attention — check above"
+    else " Some tables need attention — check above"
 ))
